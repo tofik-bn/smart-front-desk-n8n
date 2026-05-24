@@ -1,0 +1,890 @@
+{
+  "name": "Smart Front Desk",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-form",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1472,
+        0
+      ],
+      "id": "1d47f058-bc48-4956-8a41-09fc5ef0ad0d",
+      "name": "Webhook",
+      "webhookId": "3e617992-8411-4111-bfff-dec74a5085d0"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "924d2127-4c03-4292-8ec6-9ad5033e84eb",
+              "name": "lead_name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "bf329b07-8ac8-4932-8241-daa7e8daefd8",
+              "name": "contact",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "32a3b82d-96b7-4a10-aae5-56ee9e66b1ad",
+              "name": "channel",
+              "value": "Web Form",
+              "type": "string"
+            },
+            {
+              "id": "8c1a680d-2956-4c4b-844c-4683d234d491",
+              "name": "raw_message",
+              "value": "={{ $json.message }}",
+              "type": "string"
+            },
+            {
+              "id": "af6e8ff0-a782-4b41-831e-92c42ff6fe5e",
+              "name": "timestamp",
+              "value": "={{ $now }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1280,
+        0
+      ],
+      "id": "57568f83-d427-47b7-a357-4cb216b508bb",
+      "name": "Normalize Webhook"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2.1,
+      "position": [
+        -1472,
+        -176
+      ],
+      "id": "ec18760a-983d-4aeb-952d-d95700f921fd",
+      "name": "Email Trigger (IMAP)",
+      "credentials": {
+        "imap": {
+          "id": "z5qTBVPPjj88psBF",
+          "name": "IMAP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1488,
+        176
+      ],
+      "id": "a36d862b-f758-4105-bada-57eabd5b0665",
+      "name": "WhatsApp Webhook",
+      "webhookId": "ac4dd126-ac13-41b2-a2f1-6f0d76fb5218"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e967ba69-d72d-4138-ae9a-c7df1e538aee",
+              "name": "lead_name",
+              "value": "={{ $json.body.From }}",
+              "type": "string"
+            },
+            {
+              "id": "58c1807d-0bd4-4888-acdb-0262442f798f",
+              "name": "contact",
+              "value": "={{ $json.body.From }}",
+              "type": "string"
+            },
+            {
+              "id": "5582da40-ec12-455f-b00a-14534c5f6564",
+              "name": "channel",
+              "value": "WhatsApp",
+              "type": "string"
+            },
+            {
+              "id": "d886d0c6-66e4-4b68-a0ea-d19f0fbfaee8",
+              "name": "raw_message",
+              "value": "={{ $json.body.Body }}",
+              "type": "string"
+            },
+            {
+              "id": "ba67001f-913c-4798-8742-dab4f9e67f77",
+              "name": "timestamp",
+              "value": "={{ $now }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1264,
+        176
+      ],
+      "id": "8bf29f7f-efe4-4957-b5dd-1baec18d2d7c",
+      "name": "Normalize WhatsApp"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8664fd4b-180d-4197-bbaf-9df9f93a14a5",
+              "name": "lead_name",
+              "value": "={{ $json.from.split('<')[0].trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "da96aee5-9161-4a0b-a4bd-d9cf26d2f482",
+              "name": "contact",
+              "value": "={{ $json.from.split('<')[1].replace('>','') }}",
+              "type": "string"
+            },
+            {
+              "id": "704f8b9b-16b8-4ae1-b475-e56207d743a2",
+              "name": "channel",
+              "value": "Email",
+              "type": "string"
+            },
+            {
+              "id": "7a11613f-c76f-403d-b6bf-d695938a19d2",
+              "name": "raw_message",
+              "value": "={{ $json.textPlain }}",
+              "type": "string"
+            },
+            {
+              "id": "c932866d-8509-4bf7-83d2-284b2b4cc68f",
+              "name": "timestamp",
+              "value": "={{ $now }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1296,
+        -176
+      ],
+      "id": "e87fb91e-33d8-4395-8270-0d379ec7d48f",
+      "name": "Normalize email"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-8b-instant\",\n  \"temperature\": 0.3,\n  \"max_tokens\": 500,\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a smart receptionist for a local business. Extract from the message: intent (what they want), lead_score (HOT/WARM/COLD), suggested_reply (personalized 3-4 sentences). HOT = ready to book now, WARM = interested, COLD = browsing. Respond ONLY in raw JSON: {\\\"intent\\\": \\\"...\\\", \\\"lead_score\\\": \\\"...\\\", \\\"suggested_reply\\\": \\\"...\\\"}\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"={{ $json.lead_name + ' says: ' + $json.raw_message }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1008,
+        16
+      ],
+      "id": "c0914fbe-edb1-4572-89dc-4255e315936b",
+      "name": "Groq - AI Extraction",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ZQewqtValRSFA5fF",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "51fcfcbc-ed45-4128-8a7e-85d1428953a3",
+              "name": "lead_name",
+              "value": "=={{ $('Normalize WhatsApp').first().json.lead_name }}",
+              "type": "string"
+            },
+            {
+              "id": "7054567e-5578-4e7f-95f5-740e5e594ba6",
+              "name": "contact",
+              "value": "=={{ $('Normalize WhatsApp').first().json.contact }}",
+              "type": "string"
+            },
+            {
+              "id": "a87c0e89-5562-4064-93e7-0bdfbc95fedc",
+              "name": "channel",
+              "value": "=={{ $('Normalize WhatsApp').first().json.channel }}",
+              "type": "string"
+            },
+            {
+              "id": "4eff1466-447e-4c2c-87e8-8c35fc7d654e",
+              "name": "raw_message",
+              "value": "=={{ $('Normalize WhatsApp').first().json.raw_message }}",
+              "type": "string"
+            },
+            {
+              "id": "ad8cbf67-2bcd-4cea-9798-309a81690ea8",
+              "name": "timestamp",
+              "value": "=={{ $('Normalize WhatsApp').first().json.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "a98d781a-5b0e-4974-a00d-87d42aab9cff",
+              "name": "intent",
+              "value": "=={{ JSON.parse($('Groq - AI Extraction').first().json.choices[0].message.content).intent }}",
+              "type": "string"
+            },
+            {
+              "id": "7be105c5-8a1a-473c-808d-df42d89f72e1",
+              "name": "lead_score",
+              "value": "=={{ JSON.parse($('Groq - AI Extraction').first().json.choices[0].message.content).lead_score }}",
+              "type": "string"
+            },
+            {
+              "id": "1bb17b8b-95ca-47ed-a0d4-15e66b0b17bb",
+              "name": "suggested_reply",
+              "value": "=={{ JSON.parse($('Groq - AI Extraction').first().json.choices[0].message.content).suggested_reply }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -816,
+        16
+      ],
+      "id": "998fe684-7226-4328-b1e4-1d37f2ea94af",
+      "name": "Parse AI Response"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.lead_score }}",
+                    "rightValue": "HOT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "ec32dedb-b198-4223-aa96-053f018ce9a6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HOT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "61b5c620-0a03-41d6-9be9-2cbd3e0e5876",
+                    "leftValue": "={{ $json.lead_score }}",
+                    "rightValue": "WARM",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "WARM"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "20d599d2-021a-44da-8ef8-f5a35af42159",
+                    "leftValue": "={{ $json.lead_score }}",
+                    "rightValue": "COLD",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "COLD"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -640,
+        0
+      ],
+      "id": "e3ce45ba-b1c9-459e-af53-61862f7584ca",
+      "name": "Score Router"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "43ede2c7-5b91-4ede-a3f7-e5e0ab07e4f5",
+              "name": "lead_name",
+              "value": "=={{ $json.lead_name }}",
+              "type": "string"
+            },
+            {
+              "id": "ca650993-bd0e-4bc3-b61c-54069e7e6630",
+              "name": "contact",
+              "value": "=={{ $json.contact }}",
+              "type": "string"
+            },
+            {
+              "id": "b0a9d05e-4106-4d71-9000-6eea42ec925a",
+              "name": "channel",
+              "value": "=={{ $json.channel }}",
+              "type": "string"
+            },
+            {
+              "id": "b00e3e2c-c3b8-4d9c-89b6-ddaed7ac6c17",
+              "name": "raw_message",
+              "value": "=={{ $json.raw_message }}",
+              "type": "string"
+            },
+            {
+              "id": "f1927630-773e-44a7-bd01-bd7d3ce213d0",
+              "name": "timestamp",
+              "value": "=={{ $json.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "7c229897-c22d-46be-81b7-e18f47d54871",
+              "name": "intent",
+              "value": "=={{ $json.intent }}",
+              "type": "string"
+            },
+            {
+              "id": "07adf3fb-cb8d-45e7-ac07-7fda4795016e",
+              "name": "lead_score",
+              "value": "=={{ $json.lead_score }}",
+              "type": "string"
+            },
+            {
+              "id": "54f3065b-1dee-432b-885f-e9ab758d3be9",
+              "name": "suggested_reply",
+              "value": "=={{ $json.suggested_reply + ' You can book directly here: https://calendly.com/anasfahd82/new-meeting' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -384,
+        -192
+      ],
+      "id": "466379ce-2728-4b6f-bd9f-7ac4092d571c",
+      "name": "Add Calendly"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.channel }}",
+                    "rightValue": "WhatsApp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "de65e0ca-2c8e-443c-b170-33b309bf0ba4"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "WhatsApp"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "844b0aea-a0c9-4376-aef4-e7e43f8b24ee",
+                    "leftValue": "={{ $json.channel }}",
+                    "rightValue": "email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Email"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "965826d2-36d6-4fa2-9b47-60302a804895",
+                    "leftValue": "={{ $json.channel }}",
+                    "rightValue": "webhook",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "webhook"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -384,
+        64
+      ],
+      "id": "8f112d85-8ee5-4b73-a967-39393f675876",
+      "name": "Channel Router"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twilio.com/2010-04-01/Accounts/AC16f38f6634f512cbf400f8694cc2665a/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "From",
+              "value": "whatsapp:+14155238886"
+            },
+            {
+              "name": "To",
+              "value": "={{ $json.contact.replace(/^=+/, '') }}"
+            },
+            {
+              "name": "Body",
+              "value": "={{ $json.suggested_reply.replace(/^=+/, '') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -32,
+        -96
+      ],
+      "id": "2b092082-bbd0-4b1b-a04c-3bf109076425",
+      "name": "Reply via WhatsApp",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "MNIiL8XZRfwKmpeo",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "from",
+              "value": "onboarding@resend.dev"
+            },
+            {
+              "name": "to",
+              "value": "={{$json.contact.replace(/^=+/, '')}}"
+            },
+            {
+              "name": "subject",
+              "value": "={{'Re:' + $json.intent.replace(/^=+/, '')}}"
+            },
+            {
+              "name": "html",
+              "value": "={{$json.suggested_reply.replace(/^=+/, '')}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -32,
+        64
+      ],
+      "id": "4d9e3311-d03a-4021-b692-d9dcbbb7cd00",
+      "name": "Reply via Email",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ZQewqtValRSFA5fF",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.airtable.com/v0/appZZ7LpsGBhzwOaz/tbleI0mvvxnhJ2gzC",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"records\": [\n    {\n      \"fields\": {\n        \"lead_name\": \"{{ $('Parse AI Response').first().json.lead_name.replace(/^=+/, '') }}\",\n        \"contact\": \"{{ $('Parse AI Response').first().json.contact.replace(/^=+/, '') }}\",\n        \"channel\": \"{{ $('Parse AI Response').first().json.channel.replace(/^=+/, '') }}\",\n        \"raw_message\": \"{{ $('Parse AI Response').first().json.raw_message.replace(/^=+/, '') }}\",\n        \"intent\": \"{{ $('Parse AI Response').first().json.intent.replace(/^=+/, '') }}\",\n        \"lead_score\": \"{{ $('Parse AI Response').first().json.lead_score.replace(/^=+/, '') }}\",\n        \"suggested_reply\": \"{{ $('Parse AI Response').first().json.suggested_reply.replace(/^=+/, '') }}\",\n        \"timestamp\": \"{{ $('Parse AI Response').first().json.timestamp.replace(/^=+/, '') }}\",\n        \"status.\": \"processed\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "30baceb8-34a7-4ee2-b706-3e7954e2b8b2",
+      "name": "Log to Airtable",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ZQewqtValRSFA5fF",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twilio.com/2010-04-01/Accounts/AC16f38f6634f512cbf400f8694cc2665a/Messages.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "From",
+              "value": "+13074174292"
+            },
+            {
+              "name": "To",
+              "value": "+212622965442"
+            },
+            {
+              "name": "Body",
+              "value": "=={{ '🔔 ' + $json.lead_score + ' lead! Name: ' + $json.lead_name + ' Channel: ' + $json.channel + ' Intent: ' + $json.intent }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        480,
+        0
+      ],
+      "id": "6c1ec754-8f03-4902-8f2d-d84da273fdb0",
+      "name": "Notify Owner SMS",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "MNIiL8XZRfwKmpeo",
+          "name": "Unnamed credential"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Trigger (IMAP)": {
+      "main": [
+        [
+          {
+            "node": "Normalize email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Groq - AI Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Webhook": {
+      "main": [
+        [
+          {
+            "node": "Groq - AI Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize email": {
+      "main": [
+        [
+          {
+            "node": "Groq - AI Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq - AI Extraction": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Response": {
+      "main": [
+        [
+          {
+            "node": "Score Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score Router": {
+      "main": [
+        [
+          {
+            "node": "Add Calendly",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Channel Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Channel Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Calendly": {
+      "main": [
+        [
+          {
+            "node": "Channel Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Channel Router": {
+      "main": [
+        [
+          {
+            "node": "Reply via WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply via Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Reply via WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Log to Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply via Email": {
+      "main": [
+        [
+          {
+            "node": "Log to Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Airtable": {
+      "main": [
+        [
+          {
+            "node": "Notify Owner SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6d94f662-3ded-412d-b2be-1020316b98d9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f7aa1ab8f15d334baabdf1efa5d5475d46152f014738ef17263af6cb004ed800"
+  },
+  "id": "vhQtHNr1xMe7CBTa",
+  "tags": []
+}

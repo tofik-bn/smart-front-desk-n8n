@@ -1,0 +1,154 @@
+{
+  "name": "Daily Digest",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -464,
+        0
+      ],
+      "id": "e239b754-9031-4b2a-b817-bfcddbad7e0d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.airtable.com/v0/appZZ7LpsGBhzwOaz/tbleI0mvvxnhJ2gzC",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filterByFormula",
+              "value": "IS_AFTER({timestamp}, DATEADD(TODAY(), -1, 'days'))"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -192,
+        0
+      ],
+      "id": "a826c6ac-0965-4741-ba8d-e480e18b6090",
+      "name": "Get Yesterday Records",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ZQewqtValRSFA5fF",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-8b-instant\",\n  \"temperature\": 0.3,\n  \"max_tokens\": 1000,\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a business assistant. Create a concise daily digest for the business owner. Include: total leads, breakdown by channel, breakdown by score HOT/WARM/COLD, and top 3 action items. Be brief and professional.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"={{ 'Todays leads data: ' + $json.records.map(r => r.fields.lead_name + ' via ' + r.fields.channel + ' score: ' + r.fields.lead_score).join(', ') }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        16,
+        0
+      ],
+      "id": "006b3c0d-da6d-4526-9ece-a3121084e28a",
+      "name": "Build Digest",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ZQewqtValRSFA5fF",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"onboarding@resend.dev\",\n  \"to\": \"anasfahd82@gmail.com\",\n  \"subject\": \"Daily Leads Digest\",\n  \"html\": \"={{ $json.choices[0].message.content.replace(/\\n/g, '<br>') }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "43487bb6-ad0c-4cfe-ba72-642f1c4d9030",
+      "name": "Send Digest Email",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ZQewqtValRSFA5fF",
+          "name": "Bearer Auth account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Yesterday Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Yesterday Records": {
+      "main": [
+        [
+          {
+            "node": "Build Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Digest": {
+      "main": [
+        [
+          {
+            "node": "Send Digest Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "abb31042-6260-4af3-9c58-bcb2d81cf772",
+  "meta": {
+    "instanceId": "f7aa1ab8f15d334baabdf1efa5d5475d46152f014738ef17263af6cb004ed800"
+  },
+  "id": "CUYyGio22IDoV2SR",
+  "tags": []
+}
